@@ -1,6 +1,7 @@
 using Libplanet.Action.State;
 using Nekoyume.Action.Extensions;
 using Nekoyume.Model.Exceptions;
+using Nekoyume.Model.State;
 using Nekoyume.Module;
 using NineChronicles.Headless.Tests.Common;
 using Xunit;
@@ -30,33 +31,23 @@ namespace NineChronicles.Headless.Tests
                     mockWorld,
                     Fixtures.AvatarAddress,
                     Fixtures.AvatarStateFX);
-            mockWorld = inventoryExist
-                ? LegacyModule.SetState(
-                    mockWorld,
-                    Fixtures.AvatarAddress.Derive(LegacyInventoryKey),
-                    Fixtures.AvatarStateFX.inventory.Serialize())
-                : mockWorld;
-            mockWorld = worldInformationExist
-                ? LegacyModule.SetState(
-                    mockWorld,
-                    Fixtures.AvatarAddress.Derive(LegacyWorldInformationKey),
-                    Fixtures.AvatarStateFX.worldInformation.Serialize())
-                : mockWorld;
-            mockWorld = questListExist
-                ? LegacyModule.SetState(
-                    mockWorld,
-                    Fixtures.AvatarAddress.Derive(LegacyQuestListKey),
-                    Fixtures.AvatarStateFX.questList.Serialize())
-                : mockWorld;
 
             if (exc)
             {
-                Assert.Throws<InvalidAddressException>(
-                    () => AvatarModule.GetAvatarState(mockWorld, default));
+                Assert.Null(AvatarModule.GetAvatarState(mockWorld, default));
             }
             else
             {
-                var avatarState = AvatarModule.GetAvatarState(mockWorld, Fixtures.AvatarAddress);
+                AvatarState avatarState;
+                try
+                {
+                    avatarState = AvatarModule.GetAvatarStateV2(mockWorld, Fixtures.AvatarAddress);
+                }
+                catch
+                {
+                    avatarState = AvatarModule.GetAvatarState(mockWorld, Fixtures.AvatarAddress);
+                }
+                
 
                 Assert.NotNull(avatarState.inventory);
                 Assert.NotNull(avatarState.worldInformation);

@@ -532,7 +532,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes
                 ["amount"] = GetFirstCustomActionAsTransferAsset(tx).Amount.GetQuantityString(),
                 ["memo"] = memo,
             }).ToList();
-            var actual = data["transferNCGHistories"];
+            var actual = ((object[])data["transferNCGHistories"]).Select(x => (Dictionary<string, object?>)x).ToList();
             Assert.Equal(expected, actual);
         }
 
