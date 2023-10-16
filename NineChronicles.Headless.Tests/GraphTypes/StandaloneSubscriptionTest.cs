@@ -91,7 +91,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes
             var observable = stream.Take(1);
 
             var targetAction = new Grinding { AvatarAddress = new Address(), EquipmentIds = new List<Guid>() };
-            var nonTargetAction = new DailyReward6 { avatarAddress = new Address() };
+            var nonTargetAction = new DailyReward { avatarAddress = new Address() };
 
             Task<ExecutionResult> task = Task.Run(async () => await observable);
             var (block, transactions) = AppendBlock(targetAction, nonTargetAction);
@@ -150,7 +150,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes
                                         new Validator(apvPrivateKey.PublicKey, BigInteger.One)
                                     }
                                     .ToList()),
-                            states: ImmutableDictionary.Create<Address, IValue>())
+                            states: ImmutableDictionary.Create<Address, IImmutableDictionary<Address, IValue>>())
                     }.Select((sa, nonce) => Transaction.Create(nonce, new PrivateKey(), null, new[] { sa.PlainValue }))
                     .ToImmutableList(),
                 privateKey: new PrivateKey());

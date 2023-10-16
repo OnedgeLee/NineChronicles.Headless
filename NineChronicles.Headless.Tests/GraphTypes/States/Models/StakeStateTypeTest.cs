@@ -1,12 +1,13 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using GraphQL.Execution;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using NineChronicles.Headless.GraphTypes.States;
 using NineChronicles.Headless.Tests.Common;
 using Xunit;
@@ -25,9 +26,12 @@ namespace NineChronicles.Headless.Tests.GraphTypes.States.Models
             var goldCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
 
-            MockState mockState = MockState.Empty
+            MockAccountState mockAccountState = MockAccountState.Legacy
                 .SetState(GoldCurrencyState.Address, new GoldCurrencyState(goldCurrency).Serialize())
                 .SetBalance(Fixtures.StakeStateAddress, goldCurrency, (goldCurrency * deposit).RawValue);
+            MockWorld mockWorld = new MockWorld(new MockWorldState(ImmutableDictionary<Address, IAccount>.Empty.Add(
+                ReservedAddresses.LegacyAccount,
+                new MockAccount(mockAccountState))));
 
             const string query = @"
             {
@@ -43,7 +47,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes.States.Models
                 source: new StakeStateType.StakeStateContext(
                     stakeState,
                     stakeStateAddress,
-                    mockState,
+                    mockWorld,
                     blockIndex));
             var data = (Dictionary<string, object>)((ExecutionNode)queryResult.Data!).ToValue()!;
             Assert.Equal(expected, data);
