@@ -50,8 +50,7 @@ namespace NineChronicles.Headless.Tests
 
             if (exc)
             {
-                Assert.Throws<InvalidAddressException>(
-                    () => AvatarModule.GetAvatarState(mockWorld, default));
+                Assert.Null(AvatarModule.GetAvatarState(mockWorld, default));
             }
             else
             {
