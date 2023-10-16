@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
@@ -26,9 +25,6 @@ namespace Libplanet.Headless.Tests.Hosting
             var policy = new BlockPolicy();
             var stagePolicy = new VolatileStagePolicy();
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
-            var blockChainStates = new BlockChainStates(
-                new MemoryStore(),
-                stateStore);
             var actionLoader = new SingleActionLoader(typeof(DummyAction));
             var actionEvaluator = new ActionEvaluator(
                 _ => policy.BlockAction,
@@ -89,7 +85,7 @@ namespace Libplanet.Headless.Tests.Hosting
         {
             IValue IAction.PlainValue => Dictionary.Empty;
 
-            IAccount IAction.Execute(IActionContext context)
+            IWorld IAction.Execute(IActionContext context)
             {
                 return context.PreviousState;
             }
