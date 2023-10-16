@@ -56,7 +56,9 @@ namespace NineChronicles.Headless.Tests.Common
             TotalUpdatedFungibles.Keys.ToImmutableHashSet();
 
         public IImmutableDictionary<(Address, Currency), BigInteger> TotalUpdatedFungibles
-            { get; private set; }
+        {
+            get; private set;
+        }
 
         /// <inheritdoc/>
         [Pure]
