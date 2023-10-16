@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Bencodex.Types;
+using Lib9c.Renderers;
 using Libplanet.Common;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Libplanet.KeyStore;
 using Microsoft.AspNetCore.Mvc;
 using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
-using Libplanet.Crypto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Nekoyume.Module;
 using NineChronicles.Headless.GraphTypes;
 using NineChronicles.Headless.Requests;
 using Serilog;
-using Lib9c.Renderers;
-using Libplanet.Action.State;
-using System.Collections.Immutable;
 
 namespace NineChronicles.Headless.Controllers
 {
@@ -168,23 +168,25 @@ namespace NineChronicles.Headless.Controllers
                 throw new InvalidOperationException($"{nameof(chain)} is null.");
             }
 
-            List<IValue> states = playerAddresses
-                .Select(addr => chain.GetState(addr))
-                .Where(value => !(value is null))
+            List<AgentState?> agentStates = playerAddresses.Select(
+                    addr => AgentModule.GetAgentState(chain.GetWorldState(), addr))
                 .ToList();
-
-            if (!states.Any())
+            if (agentStates.All(agentState => agentState is null))
             {
                 return;
             }
 
-            var agentStates =
-                states.Select(state => new AgentState((Bencodex.Types.Dictionary)state));
-            var avatarStates = agentStates.SelectMany(agentState =>
-                agentState.avatarAddresses.Values.Select(address =>
-                    new AvatarState((Bencodex.Types.Dictionary)chain.GetState(address))));
+            var avatarStates = agentStates
+                .Where(agentState => agentState is not null)
+                .SelectMany(
+                    agentState =>
+                        agentState!.avatarAddresses.Values.Select(
+                            address => AvatarModule.GetAvatarState(chain.GetWorldState(), address)));
             var gameConfigState =
-                new GameConfigState((Bencodex.Types.Dictionary)chain.GetState(Addresses.GameConfig));
+                new GameConfigState(
+                    (Bencodex.Types.Dictionary)LegacyModule.GetState(
+                        chain.GetWorldState(),
+                        Addresses.GameConfig));
 
             bool IsDailyRewardRefilled(long dailyRewardReceivedIndex)
             {
@@ -249,17 +251,17 @@ namespace NineChronicles.Headless.Controllers
                     var msg = string.Empty;
                     switch (eval.Action)
                     {
-                        case HackAndSlash4 has:
+                        case HackAndSlash has:
                             type = NotificationEnum.HAS;
-                            msg = has.stageId.ToString(CultureInfo.InvariantCulture);
+                            msg = has.StageId.ToString(CultureInfo.InvariantCulture);
                             break;
-                        case CombinationConsumable3 _:
+                        case CombinationConsumable _:
                             type = NotificationEnum.CombinationConsumable;
                             break;
-                        case CombinationEquipment4 _:
+                        case CombinationEquipment _:
                             type = NotificationEnum.CombinationEquipment;
                             break;
-                        case Buy4 _:
+                        case Buy _:
                             type = NotificationEnum.Buyer;
                             break;
                     }
@@ -269,7 +271,7 @@ namespace NineChronicles.Headless.Controllers
                 }
                 else
                 {
-                    if (eval.Action is Buy4 buy && buy.sellerAgentAddress == address)
+                    if (eval.Action is Buy buy && buy.purchaseInfos.Any(info => info.SellerAgentAddress.Equals(address)))
                     {
                         var notification = new Notification(NotificationEnum.Seller);
                         StandaloneContext.NotificationSubject.OnNext(notification);

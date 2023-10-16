@@ -31,6 +31,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Nekoyume.Action;
+using Nekoyume.Module;
 using Nekoyume.Shared.Hubs;
 using Serilog;
 

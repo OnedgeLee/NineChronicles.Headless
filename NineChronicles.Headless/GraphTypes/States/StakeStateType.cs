@@ -1,21 +1,14 @@
-using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using GraphQL;
 using GraphQL.Types;
-using Libplanet.Action;
 using Libplanet.Explorer.GraphTypes;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using NineChronicles.Headless.GraphTypes.States.Models;
-using NineChronicles.Headless.GraphTypes.States.Models.World;
-using NineChronicles.Headless.GraphTypes.States.Models.Item;
-using NineChronicles.Headless.GraphTypes.States.Models.Mail;
-using NineChronicles.Headless.GraphTypes.States.Models.Quest;
-using Nekoyume.Blockchain.Policy;
 using Nekoyume;
 using Nekoyume.Model.Stake;
+using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using NineChronicles.Headless.GraphTypes.Abstractions;
 
@@ -25,8 +18,8 @@ namespace NineChronicles.Headless.GraphTypes.States
     {
         public class StakeStateContext : StateContext
         {
-            public StakeStateContext(StakeStateV2 stakeState, Address address, IAccountState accountState, long blockIndex)
-                : base(accountState, blockIndex)
+            public StakeStateContext(StakeStateV2 stakeState, Address address, IWorldState worldState, long blockIndex)
+                : base(worldState, blockIndex)
             {
                 StakeState = stakeState;
                 Address = address;
@@ -45,9 +38,14 @@ namespace NineChronicles.Headless.GraphTypes.States
             Field<NonNullGraphType<StringGraphType>>(
                 "deposit",
                 description: "The staked amount.",
-                resolve: context => context.Source.AccountState.GetBalance(
+                resolve: context => LegacyModule.GetBalance(
+                        context.Source.WorldState,
                         context.Source.Address,
-                        new GoldCurrencyState((Dictionary)context.Source.GetState(GoldCurrencyState.Address)!).Currency)
+                        new GoldCurrencyState(
+                                (Dictionary)LegacyModule.GetState(
+                                    context.Source.WorldState,
+                                    GoldCurrencyState.Address)!)
+                            .Currency)
                     .GetQuantityString(true));
             Field<NonNullGraphType<LongGraphType>>(
                 "startedBlockIndex",
@@ -79,7 +77,7 @@ namespace NineChronicles.Headless.GraphTypes.States
                         return null;
                     }
 
-                    IReadOnlyList<IValue?> values = context.Source.GetStates(new[]
+                    IReadOnlyList<IValue?> values = LegacyModule.GetStates(context.Source.WorldState, new[]
                     {
                         Addresses.GetSheetAddress(contract.StakeRegularFixedRewardSheetTableName),
                         Addresses.GetSheetAddress(contract.StakeRegularRewardSheetTableName),
