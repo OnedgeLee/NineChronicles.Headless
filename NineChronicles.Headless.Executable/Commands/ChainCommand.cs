@@ -23,7 +23,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NineChronicles.Headless.Executable.IO;
 using NineChronicles.Headless.Executable.Store;
-using Serilog.Core;
 using static NineChronicles.Headless.NCActionUtils;
 using CoconaUtils = Libplanet.Extensions.Cocona.Utils;
 
@@ -35,9 +34,11 @@ namespace NineChronicles.Headless.Executable.Commands
 
         public enum SnapshotType
         {
+#pragma warning disable SA1602
             Full,
             Partition,
             All
+#pragma warning restore SA1602
         }
 
         public ChainCommand(IConsole console)
@@ -128,7 +129,6 @@ namespace NineChronicles.Headless.Executable.Commands
             }
 
             Block genesisBlock = store.GetBlock(gHash);
-            var blockChainStates = new BlockChainStates(store, stateStore);
             var actionEvaluator = new ActionEvaluator(
                 _ => blockPolicy.BlockAction,
                 stateStore,
@@ -139,7 +139,6 @@ namespace NineChronicles.Headless.Executable.Commands
                 store,
                 stateStore,
                 genesisBlock,
-                blockChainStates,
                 actionEvaluator);
 
             long height = chain.Tip.Index;
