@@ -70,6 +70,8 @@ namespace NineChronicles.Headless
             services.TryAddSingleton<BlockQuery>();
             services.TryAddSingleton<TransactionQuery>();
             services.TryAddSingleton<ExplorerQuery>();
+            services.TryAddSingleton<WorldStateType>();
+            services.TryAddSingleton<AccountStateType>();
             services.TryAddSingleton(_ => new StateQuery()
             {
                 Name = "LibplanetStateQuery",
