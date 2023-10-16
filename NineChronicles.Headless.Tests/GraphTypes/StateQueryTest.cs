@@ -143,7 +143,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes
             MockWorld mockWorld = new MockWorld(new MockWorldState(ImmutableDictionary<Address, IAccount>.Empty.Add(
                 ReservedAddresses.LegacyAccount,
                 new MockAccount(mockAccountState))));
-            
+
             var queryResult = await ExecuteQueryAsync<StateQuery>(
                 sb.ToString(),
                 source: new StateContext(mockWorld, 0L));
