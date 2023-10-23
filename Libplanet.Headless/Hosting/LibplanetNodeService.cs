@@ -115,7 +115,6 @@ namespace Libplanet.Headless.Hosting
                 );
             }
 
-            var blockChainStates = new BlockChainStates(Store, StateStore);
             IActionEvaluator BuildActionEvaluator(IActionEvaluatorConfiguration actionEvaluatorConfiguration)
             {
                 return actionEvaluatorConfiguration switch
@@ -148,7 +147,6 @@ namespace Libplanet.Headless.Hosting
                     stateStore: StateStore,
                     genesisBlock: genesisBlock,
                     renderers: renderers,
-                    blockChainStates: blockChainStates,
                     actionEvaluator: actionEvaluator
                 );
             }
@@ -161,7 +159,6 @@ namespace Libplanet.Headless.Hosting
                     stateStore: StateStore,
                     genesisBlock: genesisBlock,
                     renderers: renderers,
-                    blockChainStates: blockChainStates,
                     actionEvaluator: actionEvaluator
                 );
             }
