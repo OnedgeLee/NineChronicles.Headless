@@ -123,7 +123,7 @@ namespace Libplanet.Headless.Hosting
                 {
                     PluginActionEvaluatorConfiguration pluginActionEvaluatorConfiguration 
                         => PluginActionEvaluatorLoader.CreateActionEvaluator(
-                            "Lib9c.PluginActionEvaluator.PluginActionEvaluator",
+                            pluginActionEvaluatorConfiguration.PluginTypeName,
                             pluginActionEvaluatorConfiguration.PluginPath, 
                             StateStore),
                     RemoteActionEvaluatorConfiguration remoteActionEvaluatorConfiguration 

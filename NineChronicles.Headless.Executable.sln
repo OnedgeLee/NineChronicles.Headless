@@ -80,9 +80,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Extensions.Remote
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NineChronicles.Headless.AccessControlCenter", "NineChronicles.Headless.AccessControlCenter\NineChronicles.Headless.AccessControlCenter.csproj", "{162C0F4B-A1D9-4132-BC34-31F1247BC26B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib9c.PluginActionEvaluator", "Lib9c\Lib9c.PluginActionEvaluator\Lib9c.PluginActionEvaluator.csproj", "{8F4AFCA5-5ED0-4EDB-B323-98467589F6AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.PluginActionEvaluator", "Lib9c\Lib9c.PluginActionEvaluator\Lib9c.PluginActionEvaluator.csproj", "{8F4AFCA5-5ED0-4EDB-B323-98467589F6AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Extensions.PluginActionEvaluator", "Lib9c\.Libplanet.Extensions.PluginActionEvaluator\Libplanet.Extensions.PluginActionEvaluator.csproj", "{F5CCF426-2DBD-4490-98A1-3D6719EEC249}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "Lib9c\TestPlugin\TestPlugin.csproj", "{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -763,6 +765,24 @@ Global
 		{F5CCF426-2DBD-4490-98A1-3D6719EEC249}.Release|x64.Build.0 = Release|Any CPU
 		{F5CCF426-2DBD-4490-98A1-3D6719EEC249}.Release|x86.ActiveCfg = Release|Any CPU
 		{F5CCF426-2DBD-4490-98A1-3D6719EEC249}.Release|x86.Build.0 = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|x64.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|Any CPU.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|x64.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|x64.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|x86.ActiveCfg = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.DevEx|x86.Build.0 = Debug|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|x64.ActiveCfg = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|x64.Build.0 = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF59DE06-9FC8-45FB-BC76-EED5BE1A6B4D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
