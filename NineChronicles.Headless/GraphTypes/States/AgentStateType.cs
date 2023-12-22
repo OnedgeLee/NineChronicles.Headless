@@ -10,6 +10,7 @@ using Nekoyume.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using NineChronicles.Headless.GraphTypes.States.Models;
 using static Lib9c.SerializeKeys;
 
@@ -19,8 +20,8 @@ namespace NineChronicles.Headless.GraphTypes.States
     {
         public class AgentStateContext : StateContext
         {
-            public AgentStateContext(AgentState agentState, IAccountState accountState, long blockIndex, StateMemoryCache stateMemoryCache)
-                : base(accountState, blockIndex, stateMemoryCache)
+            public AgentStateContext(AgentState agentState, IWorldState worldState, long blockIndex, StateMemoryCache stateMemoryCache)
+                : base(worldState, blockIndex, stateMemoryCache)
             {
                 AgentState = agentState;
             }
@@ -45,10 +46,10 @@ namespace NineChronicles.Headless.GraphTypes.States
                 resolve: context =>
                 {
                     IReadOnlyList<Address> avatarAddresses = context.Source.GetAvatarAddresses();
-                    return context.Source.AccountState.GetAvatarStates(avatarAddresses).Select(
+                    return avatarAddresses.Select(avatarAddress => context.Source.WorldState.GetAvatarState(avatarAddress)).Select(
                         x => new AvatarStateType.AvatarStateContext(
                             x,
-                            context.Source.AccountState,
+                            context.Source.WorldState,
                             context.Source.BlockIndex,
                             context.Source.StateMemoryCache));
                 });
@@ -58,10 +59,10 @@ namespace NineChronicles.Headless.GraphTypes.States
                 resolve: context =>
                 {
                     Currency currency = new GoldCurrencyState(
-                        (Dictionary)context.Source.GetState(GoldCurrencyState.Address)!
+                        (Dictionary)context.Source.WorldState.GetLegacyState(GoldCurrencyState.Address)!
                     ).Currency;
 
-                    return context.Source.GetBalance(
+                    return context.Source.WorldState.GetBalance(
                         context.Source.AgentAddress,
                         currency
                     ).GetQuantityString(true);
@@ -80,7 +81,7 @@ namespace NineChronicles.Headless.GraphTypes.States
                         context.Source.AgentAddress,
                         context.Source.AgentState.MonsterCollectionRound
                     );
-                    if (context.Source.GetState(monsterCollectionAddress) is { } state)
+                    if (context.Source.WorldState.GetLegacyState(monsterCollectionAddress) is { } state)
                     {
                         return new MonsterCollectionState((Dictionary)state).Level;
                     }
@@ -100,7 +101,8 @@ namespace NineChronicles.Headless.GraphTypes.States
                         addresses[avatarAddresses.Count + i] = avatarAddresses[i];
                     }
 
-                    IReadOnlyList<IValue?> values = context.Source.GetStates(addresses);
+                    // FIXME: Is this okay with legacy state?
+                    IReadOnlyList<IValue?> values = context.Source.WorldState.GetLegacyStates(addresses);
                     for (int i = 0; i < avatarAddresses.Count; i++)
                     {
                         if (values[i] is { } rawQuestList)
@@ -129,7 +131,7 @@ namespace NineChronicles.Headless.GraphTypes.States
             Field<NonNullGraphType<StringGraphType>>(
                 "crystal",
                 description: "Current CRYSTAL.",
-                resolve: context => context.Source.GetBalance(
+                resolve: context => context.Source.WorldState.GetBalance(
                     context.Source.AgentAddress,
                     CrystalCalculator.CRYSTAL
                 ).GetQuantityString(true));
@@ -142,7 +144,7 @@ namespace NineChronicles.Headless.GraphTypes.States
                     Address? address = null;
                     bool approved = false;
                     int mead = 0;
-                    if (context.Source.GetState(pledgeAddress) is List l)
+                    if (context.Source.WorldState.GetLegacyState(pledgeAddress) is List l)
                     {
                         address = l[0].ToAddress();
                         approved = l[1].ToBoolean();

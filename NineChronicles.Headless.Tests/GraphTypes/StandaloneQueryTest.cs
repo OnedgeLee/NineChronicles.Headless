@@ -31,6 +31,7 @@ using Nekoyume.Action.Loader;
 using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData;
 using NineChronicles.Headless.Properties;
 using NineChronicles.Headless.Tests.Common;
@@ -611,7 +612,7 @@ namespace NineChronicles.Headless.Tests.GraphTypes
                 lastCommit: GenerateBlockCommit(BlockChain.Tip.Index, BlockChain.Tip.Hash, GenesisValidators));
             BlockChain.Append(block, GenerateBlockCommit(block.Index, block.Hash, GenesisValidators));
 
-            var currency = new GoldCurrencyState((Dictionary)BlockChain.GetState(Addresses.GoldCurrency)).Currency;
+            var currency = new GoldCurrencyState((Dictionary)BlockChain.GetWorldState().GetLegacyState(Addresses.GoldCurrency)).Currency;
             Transaction MakeTx(ActionBase action)
             {
                 return BlockChain.MakeTransaction(ProposerPrivateKey, new ActionBase[] { action });
@@ -619,7 +620,6 @@ namespace NineChronicles.Headless.Tests.GraphTypes
             var txs = new[]
             {
                 MakeTx(new TransferAsset0(sender, recipient, new FungibleAssetValue(currency, 1, 0), memo)),
-                MakeTx(new TransferAsset2(sender, recipient, new FungibleAssetValue(currency, 1, 0), memo)),
                 MakeTx(new TransferAsset(sender, recipient, new FungibleAssetValue(currency, 1, 0), memo)),
             };
 

@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Execution;
 using Lib9c;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
 using NineChronicles.Headless.GraphTypes.States;
@@ -25,14 +28,17 @@ namespace NineChronicles.Headless.Tests.GraphTypes.States.Models
                 index
                 inventoryAddress
             }";
-            MockState mockState = MockState.Empty
+            MockAccountState mockAccountState = new MockAccountState()
                 .SetState(Fixtures.AvatarAddress, Fixtures.AvatarStateFX.Serialize())
                 .SetState(Fixtures.UserAddress, Fixtures.AgentStateFx.Serialize());
             var queryResult = await ExecuteQueryAsync<AvatarStateType>(
                 query,
                 source: new AvatarStateType.AvatarStateContext(
                     avatarState,
-                    mockState,
+                    new MockWorld(new MockWorldState(
+                        ImmutableDictionary<Address, IAccount>.Empty.Add(
+                            ReservedAddresses.LegacyAccount,
+                            new MockAccount(mockAccountState)))),
                     0, new StateMemoryCache()));
             var data = (Dictionary<string, object>)((ExecutionNode)queryResult.Data!).ToValue()!;
             Assert.Equal(expected, data);
@@ -54,13 +60,13 @@ namespace NineChronicles.Headless.Tests.GraphTypes.States.Models
                 }
             }
             ";
-            MockState mockState = MockState.Empty
+            MockAccountState mockAccountState = new MockAccountState()
                 .SetState(Fixtures.AvatarAddress, Fixtures.AvatarStateFX.Serialize())
                 .SetState(Fixtures.UserAddress, Fixtures.AgentStateFx.Serialize());
 
             for (int i = 0; i < Fixtures.AvatarStateFX.combinationSlotAddresses.Count; i++)
             {
-                mockState = mockState
+                mockAccountState = mockAccountState
                     .SetState(
                         Fixtures.AvatarStateFX.combinationSlotAddresses[i],
                         Fixtures.CombinationSlotStatesFx[i].Serialize());
@@ -70,7 +76,10 @@ namespace NineChronicles.Headless.Tests.GraphTypes.States.Models
                 query,
                 source: new AvatarStateType.AvatarStateContext(
                     avatarState,
-                    mockState,
+                    new MockWorld(new MockWorldState(
+                        ImmutableDictionary<Address, IAccount>.Empty.Add(
+                            ReservedAddresses.LegacyAccount,
+                            new MockAccount(mockAccountState)))),
                     0, new StateMemoryCache()));
             var data = (Dictionary<string, object>)((ExecutionNode)queryResult.Data!).ToValue()!;
             Assert.Equal(expected, data);
